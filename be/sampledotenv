@@ -1,0 +1,10 @@
+PORT = 
+MYSTRING= 'mongodb://127.0.0.1:27017/meetup'
+PASS = 
+PUSER = 
+
+# randomString = 'require('crypto').randomBytes(64).toString('hex')'
+randomString = '974cb04590be6c7a5a52a4b8a818bf70595e651cc7bee89e91c0bf0ed4f85e4ee1a3f2b48b6d149d176ca1accd834447fa6817439e556325ab89e545fae18582'
+resetRandomString = 'e28cdfe3bf7a0eb852db604df75fa6229c2adf7de9f299035672931e912bad48ef4fdd4adc112495e39c781f30520c27822e2d14a06f98fcb83950dacbf8a032'
+
+SECRET = '952a4b8a818b'
