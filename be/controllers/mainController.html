@@ -1,0 +1,29 @@
+
+const Signup = require('../models/signUpModel');
+function capitalise(x) {
+  var b = x.charAt(0).toUpperCase() + x.slice(1);
+  return b;
+}
+
+module.exports = {
+    acceptsignup: async (req,res)=>{
+        const incomingName = req.body.name;
+        
+        if (incomingName.includes(' ')) {
+          let splitname = incomingName.split(' ');
+          let fname = splitname[0];
+          firstName = capitalise(fname);
+          let lname = splitname[1];
+          lastName = capitalise(lname);
+        } else {
+          firstName = capitalise(incomingName);
+          lastName = '';
+        }
+        res.send('hi')
+        console.log(' signup good')
+    }
+}
+
+
+
+
