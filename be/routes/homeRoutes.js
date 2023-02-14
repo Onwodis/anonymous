@@ -14,6 +14,7 @@ router.get('/getan', checkUser,mainController.getan);
 router.get('/deleteaccount', checkUser, mainController.deleteaccount);
 router.post('/updateusername', checkUser, mainController.updateusername);
 router.post('/changepassword', checkUser, mainController.changepassword);
+router.post('/sendmessage', checkUser, mainController.sendmessage);
 router.post('/login', mainController.login);
 router.post('/updateimg', mainController.updateimg);
 router.get('/lastsign', mainController.lastsign);

@@ -85,7 +85,7 @@ setInterval( async(res)=>{
     }
   );
   // console.log(users + " has been updated successfully");
-},120000)
+},300000)
 app.listen(PORT, (req, res) => {
   console.log(`i am listening at port ${PORT}`);
 });

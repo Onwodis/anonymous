@@ -10,16 +10,12 @@ const signupSchema = new mongoose.Schema({
   anonymous: {
     type: String,
   },
+  messagelist: {
+    type: String,
+  },
   friends: {
     femail: String,
     fanonymous: String,
-    messages: {
-      messagedate: String,
-      message: String,
-      messageid: String,
-      memail: String,
-      manonymous: String,
-    },
   },
   newlogin: {
     type: String,
@@ -49,7 +45,7 @@ const signupSchema = new mongoose.Schema({
     type: String,
     unique: [true, 'Username exists'],
     required: [true, 'Username can not be empty'],
-    lowercase:true
+    lowercase: true,
   },
   regdate: String,
   randno: String,
