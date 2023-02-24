@@ -3,22 +3,55 @@
 body {
   line-height: 1.5;
   font-family: 'Muli', sans-serif;
+  background-color: black;
+  height: fit-content;
+  padding: 2px;
 }
 #inputLocation4 ::placeholder {
   color: black;
 }
+/* body-wrapper */
 .fixedi{
   position: fixed;
 }
+
+product-dashboard
 .bab {
-  height: 45vh;
+  height: fit-content;
   align-items: center;
 }
+#graa,#pwrd,#cpwrd,#date{
+  background-color: transparent;
+  color: cornsilk;
+  font-size: 17px;
+}
+#graa::placeholder,#pwrd::placeholder{
+  
+  color: cornsilk;
+  
+}
+.corn{
+  color: cornsilk;
+}
+.login-button {
+  border: 2px solid transparent;
+  margin-right: 8px;
+  color: cornsilk;
+  padding: 6px 20px !important;
+}
+
 @media screen and (max-width: 820px) {
   #gee {
     width: 95%;
+    color: red;
+    text-align: end;
+    position: fixed;
+    bottom: 69px;
+    z-index: 2;
+              
   }
 }
+
 .bore {
   /* border: 2px solid black; */
   display: flex;
@@ -29,6 +62,10 @@ body {
 
   /* grid-template-columns:5fr 1fr ; */
 }
+.tbb{
+  border: 1px solid transparent;
+}
+
 .sora {
   /* border: 2px solid black; */
   display: flex;
@@ -63,6 +100,7 @@ body {
     display: block;
   }
 }
+
 .cele{
   
   width: 25%;
@@ -72,6 +110,7 @@ body {
   /* border: 2px solid black; */
 
 }
+
 .cele input {
   height: 6vh;
   text-align: center;
@@ -84,6 +123,9 @@ body {
 }
 .bola{
     display: flex;
+  }
+.ann{
+    color: cornsilk;
   }
 @media screen and (max-width: 540px) {
   .cele{
@@ -134,7 +176,7 @@ h6 {
   font-weight: 600;
   color: #333;
 }
-
+.widget
 p {
   color: #666;
 }
@@ -785,11 +827,7 @@ ul.pagination .active a {
   padding: 20px 0;
 }
 
-.login-button {
-  border: 2px solid #dedede;
-  margin-right: 8px;
-  padding: 6px 20px !important;
-}
+
 
 .add-button {
   background: #28a745;
@@ -1152,7 +1190,7 @@ ul.pagination .active a {
 }
 
 .user-dashboard-profile .btn-offer {
-  background: #373c4d;
+  /* background: #373c4d; */
 }
 
 .dashboard-container .product-dashboard-table thead th {
@@ -1681,7 +1719,7 @@ ul.pagination .active a {
 }
 
 .widget {
-  background: #fff;
+  /* background: #fff; */
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1);
   padding: 25px 30px 30px;
   margin-bottom: 30px;
@@ -1917,8 +1955,8 @@ ul.pagination .active a {
 .widget.personal-info .form-group i,
 .widget.change-password .form-group i,
 .widget.change-email .form-group i {
-  color: white;
-  background: #5672f9;
+  /* color: white; */
+  /* background: #5672f9; */
   font-size: 25px;
   height: 50px;
   width: 50px;
@@ -1969,7 +2007,7 @@ ul.pagination .active a {
 }
 
 .widget.search .input-group .input-group-addon {
-  background: #5672f9;
+  /* background: #5672f9; */
   color: #fff;
   border: none;
 }
@@ -2023,7 +2061,7 @@ ul.pagination .active a {
 
 .subscription .content-block .form-control {
   display: inline-block;
-  background-color: #fff;
+  /* background-color: #fff; */
 }
 
 .subscription .content-block input {
@@ -2085,7 +2123,7 @@ ul.pagination .active a {
 
 .store-coupon .block {
   padding: 25px 30px 30px;
-  background: #fff;
+  /* background: #fff; */
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1);
 }
 

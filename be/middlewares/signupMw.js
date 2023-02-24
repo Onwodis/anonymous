@@ -35,6 +35,8 @@ function remove_score(x) {
 }
 var kakas = kaka();
 
+
+
 let testran;
 let firstName;
 let lastName;
@@ -200,15 +202,37 @@ const icheckedmail = async (req, res) => {
 };
 const checkUser = async (req, res, next) => {
   const auth = req.cookies.Auth;
+  const online = req.cookies.online;
 
   if (auth) {
     const currentUser = await Users.findOne({ email: auth });
 
     req.user = currentUser;
-    console.log('he just left here');
+    await res.cookie('Auth', auth, {
+      secure: true,
+      maxAge: 1200000,
+    })
+
+
+    if(online){
+      await res.cookie('online', online, {
+        secure: true,
+        maxAge: 60000,
+      });
+    }
+    else{
+      req.user.online=false
+      req.user.save()
+    }
+
+    
+    // console.log('cookies has been reset to 5 mins');
+
+
 
     next();
   } else {
+    
     req.user = null;
 
     res.json({
@@ -249,7 +273,7 @@ const checkauth = async (req, res, next) => {
     const currentUser = await Signup.findOne({ email: auth });
 
     req.user = currentUser;
-    console.log('he just left here');
+    // console.log('he just left here');
 
     next();
   } else {
@@ -260,8 +284,8 @@ const checkauth = async (req, res, next) => {
         success: 'expired',
       },
     });
-    console.log('he came here');
+    // console.log('he came here');
   }
-};
+}
 
 module.exports = { signupMw, icheckedmail, checkUser, additemware, checkauth };

@@ -35,8 +35,7 @@ const Profile = ({ user, setUser }) => {
         });
 
         navigate('/');
-      }
-      else {
+      } else {
         swal({
           title: 'Error !',
           text: "Sorry you can't do this now",
@@ -140,9 +139,9 @@ const Profile = ({ user, setUser }) => {
         }
       });
     } else {
-      const inputn = document.getElementById('new-password'); 
-      const inputo = document.getElementById('current-password'); 
-      const inputc = document.getElementById('confirm-password'); 
+      const inputn = document.getElementById('new-password');
+      const inputo = document.getElementById('current-password');
+      const inputc = document.getElementById('confirm-password');
       inputn.style.border = '2px solid red';
       inputo.style.border = '2px solid red';
       inputc.style.border = '2px solid red';
@@ -162,7 +161,7 @@ const Profile = ({ user, setUser }) => {
                     <img src={mAnonymous} className="ligo" alt="" />
                   </Link>
                   <Link className="navbar-brand" to="/">
-                    <h1 className="text-center">Anonymous</h1>
+                    <h1 className="text-center ann">Anonymous</h1>
                   </Link>
                 </div>
 
@@ -183,69 +182,46 @@ const Profile = ({ user, setUser }) => {
           </div>
         </div>
       </section>
-      {/* <!--==================================
-=            User Profile            =
-===================================--> */}
+
       <section className="dashboard section">
         {/* <!-- Container Start --> */}
         <div className="container">
           {/* <!-- Row Start --> */}
           <div className="row">
             <div className="col-md-10 offset-md-1 col-lg-4 offset-lg-0">
-              <div className="sidebar">
-                {/* <!-- User Widget --> */}
-                <div className="widget user-dashboard-profile">
-                  {/* <!-- User Image --> */}
-                  <div className="profile-thumb">
-                    <img src={mAnonymous} alt="" className="rounded-circle" />
+              <div
+                id="carouselExampleIndicators"
+                class="carousel slide"
+                data-ride="carousel"
+              >
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img
+                      class="d-block w-100"
+                      src={mAnonymous}
+                      alt="First slide"
+                    />
                   </div>
-                  {/* <!-- User Name --> */}
-                  <h5 className="text-center">{capitalise(user.username)}</h5>
-                  <p>Joined {user.regDate}</p>
+                  <div class="carousel-item">
+                    <img
+                      class="d-block w-100"
+                      src={mAnonymous}
+                      alt="Second slide"
+                    />
+                  </div>
+                  <div class="carousel-item">
+                    <img
+                      class="d-block w-100"
+                      src={mAnonymous}
+                      alt="Third slide"
+                    />
+                  </div>
                 </div>
-                {/* <!-- Dashboard Links --> */}
-                {/* <div className="widget user-dashboard-menu">
-                  <ul>
-                    <li>
-                      <Link to="dashboard-my-ads.html">
-                        <i className="fa fa-user"></i> My Ads
-                      </Link>
-                    </li>
-                    <li className="active">
-                      <Link to="dashboard-favourite-ads.html">
-                        <i className="fa fa-bookmark-o"></i> Favourite Ads{' '}
-                        <span>5</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="dashboard-archived-ads.html">
-                        <i className="fa fa-file-archive-o"></i>Archeved Ads{' '}
-                        <span>12</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="dashboard-pending-ads.html">
-                        <i className="fa fa-bolt"></i> Pending Approval
-                        <span>23</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="logout.html">
-                        <i className="fa fa-cog"></i> Logout
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="delete-account.html">
-                        <i className="fa fa-power-off"></i>Delete Account
-                      </Link>
-                    </li>
-                  </ul>
-                </div> */}
               </div>
             </div>
-            <div className="col-md-10 offset-md-1 col-lg-8 offset-lg-0">
+            <div className="col-md-10 offset-md-1 col-lg-8 offset-lg-0 bg-transparent">
               {/* <!-- Recently Favorited --> */}
-              <div className="widget dashboard-container my-adslist">
+              <div className="widget dashboard-container my-adslist d-flex">
                 <h3 className="widget-header">{user.anonymous}</h3>
                 <div class="widget personal-info">
                   <h3 class="widget-header user">Edit Username</h3>
@@ -290,26 +266,32 @@ const Profile = ({ user, setUser }) => {
                         onChange={Onchangen}
                       />
                     </div>
-                    <div class="form-group">
-                      <label for="confirm-password">Confirm New Password</label>
-                      <input
-                        type="password"
-                        class="form-control"
-                        id="confirm-password"
-                        onChange={Onchangec}
-                      />
-                    </div>
-                    <button class="btn btn-transparent" onClick={Changepwrd}>
-                      Change Password
-                    </button>
                   </div>
                 </div>
-                <div
-                  style={{ cursor: 'pointer' }}
-                  className="btn bg-danger btn-main-sm"
-                  onClick={DeleteAccount}
-                >
-                  Delete Account
+                <div>
+                  <div class="form-group py-2">
+                    <h3 class="widget-header user">Confirm Password</h3>
+
+                    <label for="confirm-password">Confirm New Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="confirm-password"
+                      onChange={Onchangec}
+                    />
+                  </div>
+                  <button class="btn btn-transparent" onClick={Changepwrd}>
+                    Change Password
+                  </button>
+                  <br />
+                  <br />
+                  <span
+                    style={{ cursor: 'pointer' }}
+                    className="btn bg-danger btn-main-sm"
+                    onClick={DeleteAccount}
+                  >
+                    Delete Account
+                  </span>
                 </div>
               </div>
             </div>

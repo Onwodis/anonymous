@@ -9,12 +9,15 @@ const Signup = require('../models/signUpModel');
 
 router.post('/signup',signupMw);
 router.post('/savesignup', mainController.acceptsignup);
+router.post('/meet',checkUser, mainController.goto);
 router.post('/search',checkUser, mainController.search);
 router.get('/getan', checkUser,mainController.getan);
 router.get('/deleteaccount', checkUser, mainController.deleteaccount);
 router.post('/updateusername', checkUser, mainController.updateusername);
 router.post('/changepassword', checkUser, mainController.changepassword);
 router.post('/sendmessage', checkUser, mainController.sendmessage);
+router.post('/disconnect', checkUser, mainController.disconnect);
+router.post('/clearchat', checkUser, mainController.clearchat);
 router.post('/login', mainController.login);
 router.post('/updateimg', mainController.updateimg);
 router.get('/lastsign', mainController.lastsign);
@@ -25,11 +28,11 @@ router.get('/loginpage', mainController.loginpage);
 router.get('/signuppage', mainController.signuppage);
 // router.get('/visibility/:productserial', mainController.visibility);
 router.get('/getsellerObjectfiles',checkUser, mainController.getsellerObjectfiles);
-router.get('/delete', async(req,res)=>{
-  await Signup.deleteMany();
-  res.send('deleted successfully')
+// router.get('/delete', async(req,res)=>{
+//   await Signup.deleteMany();
+//   res.send('deleted successfully')
 
-});
+// });
 
 
 

@@ -1,13 +1,14 @@
 const Users = require('../models/signUpModel');
 
 const Products = require('../models/productsModel');
+const Friends = require('../models/friendssModel');
 const Messages = require('../models/messagesModel');
-const { getTimeDiff } = require('time-difference-js');
+const sortBy = require('sort-by')
 const jwt_decode = require('jwt-decode');
 const fs = require('fs');
 const Buffer = require('buffer').Buffer;
 const jwt = require('jsonwebtoken');
-
+let allfriends;
 let randomn = (testran = require('crypto').randomBytes(4).toString('hex'));
 let rmessages = {};
 const bcrypt = require('bcryptjs');
@@ -30,43 +31,303 @@ function currentDate() {
   let dateFormat = weekday[ddate.getDay()] + ',' + ddate.toLocaleString();
   return dateFormat;
 }
+function kaka() {
+  var fowls = Math.floor(Math.random() * 100000 + 1);
+  return fowls;
+}
+let messageio
 
 module.exports = {
+  clearchat: async (req, res) => {
+    const friendnum = parseInt(req.body.friendnum);
+    console.log(friendnum + ' is friendnum');
+    const receiver = await Users.findOne({ uniquenum: friendnum });
+
+    const bond = friendnum + req.user.uniquenum;
+    await Messages.deleteMany({ bond: bond });
+
+    // req.user.friends.remove({ femail: receiver.email });
+    // await req.user.save();
+
+    const myG = await Users.findOne({ email: req.user.email });
+    allfriends = myG.friends;
+
+    if (myG.friends.length > 0) {
+      const myG = await Users.findOne({ email: req.user.email });
+      allfriends = myG.friends;
+      res.json({
+        signupfeedBack: {
+          success: true,
+          message: false,
+          user: req.user,
+          newFriend: receiver,
+          rmessages: null,
+          allfriends: myG.friends.reverse(),
+        },
+      });
+    } else {
+      res.json({
+        signupfeedBack: {
+          success: true,
+          message: true,
+          user: req.user,
+          newFriend: receiver,
+          allfriends: false,
+        },
+      });
+    }
+    console.log('pushed successfully');
+  },
+  disconnect: async (req, res) => {
+    const friendnum = parseInt(req.body.friendnum);
+    console.log(friendnum + ' is friendnum');
+    const receiver = await Users.findOne({ uniquenum: friendnum });
+
+    const bond = friendnum + req.user.uniquenum;
+    // await Messages.deleteMany({ bond: bond });
+
+    req.user.friends.remove({ femail: receiver.email });
+    await req.user.save();
+
+    const myG = await Users.findOne({ email: req.user.email });
+    allfriends = myG.friends;
+
+    if (myG.friends.length > 0) {
+      const myG = await Users.findOne({ email: req.user.email });
+      allfriends = myG.friends;
+      res.json({
+        signupfeedBack: {
+          success: true,
+          message: true,
+          user: req.user,
+          newFriend: receiver,
+          allfriends: myG.friends.reverse(),
+        },
+      });
+    } else {
+      res.json({
+        signupfeedBack: {
+          success: true,
+          message: true,
+          user: req.user,
+          newFriend: receiver,
+          allfriends: false,
+        },
+      });
+    }
+    console.log('pushed successfully');
+  },
   sendmessage: async (req, res) => {
     const { rexemail, newmessage, timee } = req.body;
     const receiver = await Users.findOne({ email: rexemail });
-    receiver.friends.femail = req.user.email;
-    req.user.friends.femail = rexemail;
-    const messages = await Messages.where("common").equals(req.user.email + rexemail)
-    const howManyMessages = messages.length
-    
-    req.user.messageList = (req.user.messageList )
+
+    const bond = receiver.uniquenum + req.user.uniquenum;
+    const messages = await Messages.find({ bond: bond });
+
+    // const lastfriendindex = await Friends.findOne({}).sort({ chatIndex: -1 });
+
+    // const infriendlist = await Friends.where('iam')
+    //   .equals(rexemail)
+    //   .where('andmyfriendis')
+    //   .equals(req.user.email);
+    // if (!infriendlist) {
+    //   if (lastfriendindex) {
+    //     await Friends.create({
+    //       iam: rexemail,
+    //       username: receiver.username,
+    //       andmyfriendis: req.user.email,
+    //       common: req.user.email + rexemail,
+    //       chatIndex: lastfriendindex + 1,
+
+    //     });
+    //   } else {
+    //     await Friends.create({
+    //       iam: rexemail,
+    //       username: receiver.username,
+    //       andmyfriendis: req.user.email,
+    //       common: req.user.email + rexemail,
+    //       chatIndex: 1,
+    //     });
+    //   }
+    // } else {
+    //   if (lastfriendindex) {
+    //     const sea = lastfriendindex.chatIndex + 1;
+    //     console.log('lastfriendindex is ' + lastfriendindex.chatIndex + " "+ sea);
+    //     await Friends.deleteOne({ common: req.user.email + rexemail });
+    //     await Friends.create({
+    //       iam: rexemail,
+    //       username: receiver.username,
+    //       andmyfriendis: req.user.email,
+    //       common: req.user.email + rexemail,
+    //       chatIndex: sea,
+    //     });
+
+    // if (lastfriendindex) {
+    //   await Friends.create({
+    //     iam: rexemail,
+    //     username: receiver.username,
+    //     andmyfriendis: req.user.email,
+    //     common: req.user.email + rexemail,
+    //     chatIndex: lastfriendindex + 1,
+    //   });
+    // } else {
+    //   await Friends.create({
+    //     iam: rexemail,
+    //     username: receiver.username,
+    //     andmyfriendis: req.user.email,
+    //     common: req.user.email + rexemail,
+    //     chatIndex: 1,
+    //   });
+    // }
+
+    // await infriendlist.save();
+    // } else {
+    //   infriendlist.chatIndex = 1;
+    //   await Friends.create({
+    //     iam: rexemail,
+    //     username: receiver.username,
+    //     andmyfriendis: req.user.email,
+    //     common: req.user.email + rexemail,
+    //     chatIndex: 1,
+    //   });
+    //   console.log('in else loop');
+    // }
+
+    const howManyMessages = messages.length;
+    // req.user.messageList = req.user.messageList;
     await Messages.create({
       messagedate: currentDate(),
       time: timee,
       message: newmessage,
       messageid: randomn,
+      bond: req.user.uniquenum + receiver.uniquenum,
       messageindex: howManyMessages + 1,
       memail: req.user.email,
       manonymous: req.user.anonymous,
-      common:req.user.email + rexemail,
+      common: req.user.email + rexemail,
       from: req.user.email,
       to: rexemail,
-      concerna: rexemail,
-      concernb: rexemail,
     });
-    console.log('pushed successfully')
 
-    
-    res.json({
-      signupfeedBack: {
-        success: true,
-        message: 'message sent',
-        user: req.user,
-      },
-    });
+    // req.user.messageList = req.user.messageList;
+
+    req.user.friends.remove({ femail: receiver.email });
+    req.user.lastseen = currentDate();
+    await req.user.save();
+
+    receiver.friends.remove({ femail: req.user.email });
+    await receiver.save();
+    const friendslength = req.user.friends.length;
+    const rfriendslength = receiver.friends.length;
+    const recmessages = await (
+      await Messages.find({ bond: bond }).where('from').equals(receiver.email)
+    ).length;
+    const sentmessages = await (
+      await Messages.find({ bond: bond }).where('from').equals(req.user.email)
+    ).length;
+
+    const allsentmessages = await (
+      await Messages.find().where('from').equals(req.user.email)
+    ).length;
+    const allrecmessages = await (
+      await Messages.find().where('to').equals(req.user.email)
+    ).length;
+
+    const frienddets = {
+      fusername: receiver.username,
+      lastmessage: newmessage,
+      femail: receiver.email,
+      recmessages: recmessages,
+      sentmessages: sentmessages,
+      chatIndex: friendslength + 1,
+    };
+    const rfrienddets = {
+      fusername: req.user.username,
+      lastmessage: newmessage,
+      femail: req.user.email,
+      chatIndex: rfriendslength + 1,
+      sentmessages: recmessages,
+      recmessages: sentmessages,
+    };
+
+    req.user.friends.push(frienddets);
+    req.user.allsentmessages = allsentmessages;
+    req.user.allrecmessages = allrecmessages;
+    await req.user.save();
+    receiver.friends.push(rfrienddets);
+    await receiver.save();
+    const messagess = await Messages.find({ bond: bond });
+    const myG = await Users.findOne({ email: req.user.email });
+    allfriends = myG.friends;
+    messageio = {
+      message:newmessage,
+      time:timee,
+      from:req.user.email,
+      to:rexemail,
+    }
+
+    if (myG.friends.length > 0) {
+      const myG = await Users.findOne({ email: req.user.email });
+      allfriends = myG.friends;
+      const receiverb = await Users.findOne({ email: rexemail });
+
+      res.json({
+        signupfeedBack: {
+          success: true,
+          message: true,
+          user: req.user,
+          newFriend: receiverb,
+          rmessages: messagess,
+          allfriends: myG.friends.reverse(),
+        },
+      });
+    } else {
+      res.json({
+        signupfeedBack: {
+          success: true,
+          message: true,
+          user: req.user,
+          newFriend: receiverb,
+          rmessages: messagess,
+          allfriends: false,
+        },
+      });
+    }
+    console.log('pushed successfully');
   },
+  goto: async (req, res) => {
+    const email = req.body.emails;
+    const receiver = await Users.findOne({ email: email });
+    const bond = receiver.uniquenum + req.user.uniquenum;
+    const myG = await Users.findOne({ email: req.user.email });
+    const messagess = await Messages.find({ bond: bond });
 
+    // console.log('good job ' + messagess[0]);
+
+    if (messagess.length > 0) {
+      res.json({
+        signupfeedBack: {
+          success: true,
+          message: true,
+          user: req.user,
+          newFriend: receiver,
+          rmessages: messagess,
+          allfriends: myG.friends.reverse(),
+        },
+      });
+    } else {
+      res.json({
+        signupfeedBack: {
+          success: true,
+          message: false,
+          user: req.user,
+          newFriend: receiver,
+          rmessages: messagess,
+          allfriends: myG.friends.reverse(),
+        },
+      });
+    }
+  },
   changepassword: async (req, res) => {
     const pwrds = req.body.pwrds;
     const ifoldpwrdisnewpwrd = await bcrypt.compare(
@@ -165,9 +426,9 @@ module.exports = {
     const user = req.user;
     const codee = req.body.search;
     console.log(user.username, codee);
-    const newfriend = await Users.findOne({ anonymous: codee });
-    const friends = user.friends;
+    const friends = user.friends.sort(sortBy('-chatIndex'));
 
+    const newfriend = await Users.findOne({ anonymous: codee });
     if (codee == user.anonymous) {
       res.json({
         signupfeedBack: {
@@ -179,40 +440,45 @@ module.exports = {
       });
     } else {
       if (newfriend) {
-        const checkmessages = newfriend.friends.messages;
-        const chemail = newfriend.friends.femail; //check if they have ever chatted
-        if (chemail == req.user.email) {
-          console.log(checkmessages + ' is checkmessages already');
-          const cmessages = checkmessages.map((el) => {
-            if (el.from == req.user.email || el.to == req.user.email) {
-              rmessages.push(el);
-              return rmessages;
-            }
-          });
+        const bond = newfriend.uniquenum + req.user.uniquenum;
+
+        const cmessages = await Messages.find({
+          bond: bond,
+        });
+        
+
+        //check if they have ever chatted
+        // const cmessages = await Messages.find()
+        if (cmessages.length > 0) {
           res.json({
             signupfeedBack: {
               success: true,
-              message: user.username + ' ' + codee.search,
+              message: true,
               friends: friends,
               newFriend: newfriend,
               user: user,
               rmessages: cmessages,
             },
           });
-          console.log('message exists');
+          console.log('message exists ' + cmessages[0]);
         } else {
           res.json({
             signupfeedBack: {
               success: true,
-              message: user.username + ' ' + codee.search,
+              message: false,
               friends: friends,
               newFriend: newfriend,
               user: user,
+              rmessages: '',
             },
           });
-          console.log('message do not exist');
+          console.log(
+            'messages do not exist ' + cmessages[0] + newfriend.email
+          );
         }
       } else {
+        // console.log('message exists ' + cmessages);
+
         res.json({
           signupfeedBack: {
             success: false,
@@ -242,21 +508,9 @@ module.exports = {
         email: saveit.email,
         logintimes: 0,
         lastlogin: '',
+        uniquenum: kaka(),
         anonymous: require('crypto').randomBytes(5).toString('hex'),
         regDate: currentDate(),
-        friends: {
-          femail: null,
-          fanonymous: null,
-          messages: {
-            messagedate: null,
-            message: null,
-            messageid: null,
-            memail: null,
-            manonymous: null,
-            from: null,
-            to: null,
-          },
-        },
       });
       res.clearCookie('signuptoken');
       res.json({
@@ -325,17 +579,14 @@ module.exports = {
     const login = req.body.login;
     const email = login.username;
     const password = login.password;
-    console.log('login is here ' + email);
+    const socketid = login.socketid;
+    // console.log('login is here ' + email);
 
     if (email.includes('.')) {
       const User = await Users.findOne({ email: email });
       if (User) {
         const pwrdMatch = await bcrypt.compare(password, User.pwrd);
         if (pwrdMatch) {
-          const products = await Products.find({ email: email }).sort({
-            _id: -1,
-          });
-          // console.log(products + ' is products on login');
           await res.cookie('Auth', User.email, {
             secure: true,
             maxAge: 1200000,
@@ -344,21 +595,44 @@ module.exports = {
             secure: true,
             maxAge: 1200000,
           });
+          await res.cookie('online', 'fdfgljkj', {
+            secure: true,
+            maxAge: 60000,
+          });
 
           const UserAgain = await Users.findOne({ email: email });
+          const Tusers = await Users.find().length;
+
+          UserAgain.tusers = Tusers;
 
           UserAgain.logintimes++;
           UserAgain.lastlogin = UserAgain.newlogin;
           UserAgain.newlogin = currentDate();
+          UserAgain.socketid = socketid;
+          UserAgain.online = true
           await UserAgain.save();
-          console.log(User + ' latest object');
+          // console.log(User + ' latest object');
+          let allfriends = UserAgain.friends;
+          if (allfriends.length > 0) {
+            allfriends = UserAgain.friends;
+            // console.log(allfriends + ' latest friends');
 
-          res.json({
-            signupfeedBack: {
-              success: true,
-              user: User,
-            },
-          });
+            res.json({
+              signupfeedBack: {
+                success: true,
+                user: User,
+                allfriends: allfriends.reverse(),
+              },
+            });
+          } else {
+            res.json({
+              signupfeedBack: {
+                success: true,
+                user: User,
+                allfriends: false,
+              },
+            });
+          }
 
           // console.log(seller + ' seller logged in successfully');
         } else {
@@ -369,27 +643,23 @@ module.exports = {
             },
           });
 
-          console.log('incorrect password');
+          console.log('Incorrect password');
         }
       } else {
         res.json({
           signupfeedBack: {
             success: false,
-            message:
-              'The user whose email is ' + email + '  does not exist,Sign-up!',
+            message: 'The user with username ' + email + ' does not exist',
           },
         });
         console.log('incorrect email');
       }
-    } else {
+    }
+    else {
       const User = await Users.findOne({ username: email });
       if (User) {
         const pwrdMatch = await bcrypt.compare(password, User.pwrd);
         if (pwrdMatch) {
-          const products = await Products.find({ email: email }).sort({
-            _id: -1,
-          });
-          // console.log(products + ' is products on login');
           await res.cookie('Auth', User.email, {
             secure: true,
             maxAge: 1200000,
@@ -398,22 +668,46 @@ module.exports = {
             secure: true,
             maxAge: 1200000,
           });
+          await res.cookie('online', "fdfgljkj", {
+            secure: true,
+            maxAge: 60000,
+          });
 
           const UserAgain = await Users.findOne({ username: email });
+          const Tusers = await Users.find();
+
+          UserAgain.tusers = Tusers.length;
+          // console.log(Tusers.length + ' are the total users');
 
           UserAgain.logintimes++;
           UserAgain.lastlogin = UserAgain.newlogin;
           UserAgain.newlogin = currentDate();
-          await UserAgain.save();
-          console.log(User + ' latest object');
+          UserAgain.socketid = socketid;
+          UserAgain.online = true;
 
-          res.json({
-            signupfeedBack: {
-              success: true,
-              message: 'correct',
-              user: User,
-            },
-          });
+          await UserAgain.save();
+          console.log(socketid + ' latest sockid');
+          let allfriends = UserAgain.friends;
+          if (allfriends.length > 0) {
+            allfriends = UserAgain.friends;
+            // console.log(allfriends + ' latest friends');
+
+            res.json({
+              signupfeedBack: {
+                success: true,
+                user: User,
+                allfriends: allfriends.reverse(),
+              },
+            });
+          } else {
+            res.json({
+              signupfeedBack: {
+                success: true,
+                user: User,
+                allfriends: false,
+              },
+            });
+          }
 
           // console.log(seller + ' seller logged in successfully');
         } else {
@@ -687,4 +981,5 @@ module.exports = {
       products: productss,
     });
   },
+  messageio
 };

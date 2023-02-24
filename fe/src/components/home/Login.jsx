@@ -4,8 +4,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import Anonyhead from '../dashboard/Anonyhead';
+import socketIOClient from 'socket.io-client';
 
-const Login = ({ user, setUser }) => {
+// import ParticlesBg from 'particles-bg';
+// import ParticleEffectButton from 'react-particle-effect-button';
+
+const Login = ({ user, setUser, friends, setFriends, socket }) => {
   function capitalise(x) {
     var b = x.charAt(0).toUpperCase() + x.slice(1);
     return b;
@@ -23,12 +27,14 @@ const Login = ({ user, setUser }) => {
     e.preventDefault();
     setUsername(e.target.value);
   };
+
   const Submit = (ev) => {
     ev.preventDefault();
     if (username !== '' && username !== ' ' && pwrd !== '' && pwrd !== ' ') {
       const objectlog = {
         username: username,
         password: pwrd,
+        socketid: socket.id,
       };
       axios
         .post('/login', {
@@ -37,6 +43,14 @@ const Login = ({ user, setUser }) => {
         .then((res) => {
           if (res.data.signupfeedBack.success) {
             setUser(res.data.signupfeedBack.user);
+            setFriends(res.data.signupfeedBack.allfriends);
+            // const email= res.data.signupfeedBack.user.email;
+            const username =
+              res.data.signupfeedBack.user.username.toLowerCase();
+
+            socket.emit('add_user', objectlog);
+            console.log('my socket id is ' + socket.id);
+
             swal(
               'Welcome ' + capitalise(res.data.signupfeedBack.user.username),
               '...Do not forget to invite your friends !!'
@@ -64,7 +78,7 @@ const Login = ({ user, setUser }) => {
 
   return (
     <div>
-      <section className="fixo">
+      <section className="fixo col-11">
         <div className="container">
           <div className="row">
             <div className=" bore">
@@ -89,16 +103,16 @@ const Login = ({ user, setUser }) => {
         </div>
       </section>
 
-      <section className="hero-area bg-1 text-center overlay">
+      <section className="hero-area bg text-center overhlay">
         <div className="container">
           <div className="row">
             <div className="col-12 col-md-12">
-              <div className="content-block cele col-7 mx-auto">
+              <div className="content-block text-center cele col-7 mx-auto align-items-center">
                 {/* <form action="/login" method="post"> */}
                 <input
                   type="text"
                   name="username"
-                  id=""
+                  id="graa"
                   className="text-center rounded-pill"
                   placeholder="username or Email"
                   onChange={Onchangeu}
@@ -107,14 +121,14 @@ const Login = ({ user, setUser }) => {
                 <input
                   type="password"
                   name="pwrd"
-                  id=""
+                  id="graa"
                   className="text-center rounded-pill"
                   onChange={Onchangep}
                   placeholder="enter password"
                 />
 
                 <button
-                  className="navbar-toggler"
+                  className="navbar-toggler corn mx-auto"
                   type="submit"
                   data-toggle="collapse"
                   data-target="#navbarSupportedContent"
@@ -123,7 +137,8 @@ const Login = ({ user, setUser }) => {
                   aria-label="Toggle navigation"
                   onClick={Submit}
                 >
-                  <span className="">login</span>
+                  <br />
+                  <span className="corn text-center">login</span>
                 </button>
                 {/* </form> */}
               </div>

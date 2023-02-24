@@ -94,16 +94,16 @@ const Signup = () => {
         </div>
       </section>
 
-      <section className="hero-area bg-1 text-center overlay">
+      <section className="hero-area  text-center ovenrlay">
         <div className="container">
           <div className="row">
             <div className="col-12 col-md-12">
-              <div className="content-block col-7 cele mx-auto">
+              <div className="content-block text-center col-7 cele mx-auto">
                 {/* <form action="/signup" method="post"> */}
                 <input
                   type="text"
                   name="username"
-                  id=""
+                  id="graa"
                   placeholder="Username"
                   className="text-center rounded-pill"
                   onChange={HandleChange}
@@ -113,7 +113,7 @@ const Signup = () => {
                   type="email"
                   name="email"
                   className="text-center rounded-pill"
-                  id=""
+                  id="graa"
                   placeholder="email"
                   onChange={HandleChange}
                 />
@@ -150,7 +150,7 @@ const Signup = () => {
                 <br />
                 <br />
                 <button
-                  className="navbar-toggler"
+                  className="navbar-toggler corn"
                   type="submit"
                   data-toggle="collapse"
                   data-target="#navbarSupportedContent"

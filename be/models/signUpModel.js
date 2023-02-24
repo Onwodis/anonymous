@@ -7,16 +7,32 @@ const signupSchema = new mongoose.Schema({
   logintimes: {
     type: Number,
   },
+  online:false,
+  socketid:String,
+  tusers: {
+    type: Number,
+  },
   anonymous: {
     type: String,
   },
   messagelist: {
     type: String,
   },
-  friends: {
-    femail: String,
-    fanonymous: String,
-  },
+  socketid:String,
+  uniquenum: Number,
+  allsentmessages: Number,
+  allrecmessages: Number,
+  friends: [
+    {
+      femail: String,
+      fanonymous: String,
+      fusername: String,
+      lastmessage: String,
+      sentmessages: Number,
+      recmessages: Number,
+      chatIndex: Number,
+    },
+  ],
   newlogin: {
     type: String,
   },
@@ -24,6 +40,9 @@ const signupSchema = new mongoose.Schema({
     type: String,
   },
   lastlogin: {
+    type: String,
+  },
+  lastseen: {
     type: String,
   },
   email: {

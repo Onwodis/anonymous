@@ -1,5 +1,7 @@
 const Users = require('../models/signUpModel');
 
+
+
 module.exports = {
   setUser: async (req, res, next) => {
     const auth = req.cookies.Auth;
@@ -9,8 +11,12 @@ module.exports = {
 
       req.user = currentUser;
 
+
+
+
       next();
     } else {
+      
       req.user = null;
 
       next();

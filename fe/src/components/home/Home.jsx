@@ -1,15 +1,18 @@
 import React from 'react'
 import { Link} from 'react-router-dom';
 import Anonyhead from '../dashboard/Anonyhead';
+// import ParticlesBg from 'particles-bg';
+// import Footer from './Footer';
+
 
 
 const Home = () => {
   return (
     <div>
-      <section className="fixo">
+      <section className="fixo bg-transparent">
         <div className="container">
           <div className="row ">
-            <div className=" bore">
+            <div className="bore">
               <div className="">
                 <Anonyhead />
               </div>
@@ -31,11 +34,11 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="hero-area bg-1 text-center overly">
+      <section className="hero-area bg-2 text-center overlay">
         <div className="container">
           <div className="row">
             <div className="col-md-12">
-              <div className="content-block">
+              <div className="content-block text-center">
                 <h1>Secure your Chats ! </h1>
                 <p>
                   Join the millions who no longer have to <br /> worry abut
@@ -97,6 +100,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+      
+      {/* <Footer/> */}
+      {/* <ParticlesBg type="cobweb" bg={true} /> */}
     </div>
   );
 }

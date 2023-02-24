@@ -6,16 +6,29 @@ import Editprofile from './components/dashboard/Profile.jsx';
 import Verifymail from './components/home/Verifymail';
 import Signup from './components/home/Signup.jsx';
 import Login from './components/home/Login.jsx';
+import socketIOClient from 'socket.io-client';
+
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ParticlesBg from 'particles-bg';
+
 
 import './App.css';
+import Footer from './components/home/Footer.jsx';
 
 function App() {
   const [user, setUser] = useState({});
   const [friends, setFriends] = useState({});
   const [newfriend, setNewfriend] = useState({});
   const [currentChat, setCurrentChat] = useState("");
+  const [cmessages, setMessages] = useState([]);
+  const [ifmessages, setIfmessages] = useState(false);
+
+  const ENDPOINT = 'http://localhost:7501/';
+
+  const socket = socketIOClient(ENDPOINT);
+  
+
   return (
     <>
       <Router>
@@ -25,7 +38,14 @@ function App() {
           <Route
             path="/loginpage"
             exact
-            element={<Login user={user} setUser={setUser} />}
+            element={
+              <Login
+                user={user}
+                setUser={setUser}
+                setFriends={setFriends}
+                socket={socket}
+              />
+            }
           />
           <Route
             path="/dashboard"
@@ -36,13 +56,18 @@ function App() {
                 setUser={setUser}
                 friends={friends}
                 setFriends={setFriends}
+                setMessages={setMessages}
                 currentChat={currentChat}
                 setCurrentChat={setCurrentChat}
                 newfriend={newfriend}
                 setNewfriend={setNewfriend}
+                ifmessages={ifmessages}
+                setIfmessages={setIfmessages}
+                socket={socket}
               />
             }
           />
+
           <Route
             path="/chat"
             exact
@@ -56,6 +81,11 @@ function App() {
                 setCurrentChat={setCurrentChat}
                 newfriend={newfriend}
                 setNewfriend={setNewfriend}
+                cmessages={cmessages}
+                setMessages={setMessages}
+                ifmessages={ifmessages}
+                setIfmessages={setIfmessages}
+                socket={socket}
               />
             }
           />
@@ -67,6 +97,7 @@ function App() {
           <Route path="/verifymail" exact element={<Verifymail />} />
         </Routes>
       </Router>
+      {/* <ParticlesBg type="lines" bg={true} duration={2}/> */}
     </>
   );
 }
