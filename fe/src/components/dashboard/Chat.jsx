@@ -2,18 +2,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import swal from 'sweetalert';
-import { useToast } from '@chakra-ui/react';
 import Anonymous from '../../anonymous.png';
 import './Chat.css';
-// import {socket} from '../../components/home/Login.jsx'
-// import {socket} from "./"
+import io from 'socket.io-client';
 import mAnonymous from '../../main_anonymous.png';
-// import {
-//   host,
-//   recieveMessageRoute,
-//   sendMessageRoute,
-// } from '../../utils/APIRoutes';
-// import ParticlesBg from 'particles-bg';
+
+const ENDPOINT = 'http://localhost:3001'; // "https://talk-a-tive.herokuapp.com"; -> After deployment
+var socket = io('http://localhost:3001');
+ 
+
 
 const Chat = ({
   user,
@@ -28,7 +25,7 @@ const Chat = ({
   cmessages,
   ifmessages,
   setIfmessages,
-  socket,
+  // socket,
 }) => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
@@ -39,7 +36,21 @@ const Chat = ({
   const [talk, setTalk] = useState(
     'Disconnect ' + capitalise(newfriend.username)
   );
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  // const [lastseen, setlastseen] = useState('');
+  const [istyping, setIsTyping] = useState(false);
 
+  // useEffect(() => {
+    
+  //   // console.log('new chat message connection initiated');
+
+  //   // socket.emit('setup', user);
+  //   socket.emit('connection', newfriend);
+    
+
+  //   // eslint-disable-next-line
+  // }, []);
   const Scrold = (e) => {
     e.preventDefault();
 
@@ -51,24 +62,27 @@ const Chat = ({
 
     document.getElementById('foch').focus();
   };
-  console.log('my socket id is ' + socket.id);
-  // alert(newfriend.username+ " is newfriend")
-
-  useEffect(() => {
-    socket.on('nma', (tosend) => {
-      if (tosend.from === newfriend.email) {
-        // setMessages([...cmessages, tosend])
-        Scrold()
-        
-        // alert(' new message received ' + tosend.message);
-      }
-
-    })
-    socket.on('noti', (data) => {
-      
-      console.log(' this is notification ' + data);
+  useEffect((user) => {
+    // Listen for the 'connection' event
+    socket.on('connection', ({data}) => {
+      console.log('Connected to the Socket.io server ');
     });
-  }, [socket]);
+
+    return () => {
+      // Clean up the socket when the component unmounts
+      socket.disconnect();
+    };
+  }, []);
+  useEffect(() => {
+    // Receive messages from the server
+    console.log('new chat message recgv');
+
+    // socket.emit('connection', newfriend);
+    socket.on('chatt', () => {
+      console.log('Connected to the Socket.io server');
+    });
+  }, [cmessages])
+
 
   const ClearChat = (e) => {
     e.preventDefault();
@@ -198,18 +212,10 @@ const Chat = ({
         new Date(Date.now()).getHours() +
         ':' +
         new Date(Date.now()).getMinutes();
-      const tosend = {
-        message: capitalise(typed),
-        to: newfriend.email,
-        from: user.email,
-        socketid: newfriend.socketid,
-        tousername: newfriend.username.toLowerCase(),
-        time: timee,
-      }
 
       axios
         .post('/sendmessage', {
-          newmessage: capitalise(typed),
+          newmessage: typed,
           rexemail: currentChat,
           timee: timee,
         })
@@ -221,16 +227,21 @@ const Chat = ({
             setIfmessages(res.data.signupfeedBack.message);
             setFriends(res.data.signupfeedBack.allfriends);
             setSure('Clear Chats');
-            
-            socket.emit('sendMessage', tosend);
+            const data = {
+              message: typed,
+              to: newfriend.email,
+              from: user.email,
+              socketid: res.data.signupfeedBack.newFriend.socketid,
+              tousername: newfriend.username,
+              time: timee,
+            };
 
-            setTyped('');
+            socket.emit('chatMessage', data);
 
-            // console.log('ok ' + res.data.signupfeedBack.newFriend.username);
-            // console.log(
-            //   res.data.signupfeedBack.rmessages[0] + ' is mess index 0'
-            // );
-          } else if (res.data.signupfeedBack.message === 'expired') {
+            setTyped('')
+
+          }
+          else if (res.data.signupfeedBack.message === 'expired') {
             swal({
               title: 'Login expired !',
               text: 'authentication expired',
@@ -248,17 +259,9 @@ const Chat = ({
               button: 'Ok!',
             });
           }
-        });
-      // const socket = socketIOClient(ENDPOINT);
-
-      // socket.emit('smessage', {
-      //   text: typed,
-      //   to: newfriend.email,
-      //   from: user.email,
-      //   id: `${socket.id}${Math.random()}`,
-      //   socketID: socket.id,
-      // });
-      console.log(socket.id + ' is socketid');
+        })
+      
+      
     } else {
       swal({
         title: 'Input is empty !',
@@ -313,75 +316,11 @@ const Chat = ({
   }
 
   if (ifmessages) {
-    console.log('this is ifmessages ' + ifmessages);
+    // console.log('this is ifmessages ' + ifmessages);
     return (
       <div>
-        <section className="dashboard  section">
+        <section className="dashboard bg-light section">
           <div className="container">
-            <div class="row makefixed">
-              <div className=" col-md-10 offset-md-1 col-lg-12 offset-lg-0 align-items-center">
-                <div className="sidebar">
-                  <div className="widget user-dashboard-profile d-flex justify-content-between align-items-center col-12 bg-transparent text-center">
-                    {/* <!-- User Image --> */}
-                    <Link to="/dashboard">
-                      <div className="profile-thumb ">
-                        <img
-                          src={mAnonymous}
-                          alt=""
-                          className="rounded-circle"
-                        />
-                      </div>
-                    </Link>
-
-                    <div className="align-items-center text-center">
-                      {/* <!-- User Name --> */}
-
-                      <small>...You are chatting with </small>
-                      <br />
-                      <h5 className="text-center">
-                        {capitalise(newfriend.username)}
-                      </h5>
-
-                      {/* <br /> */}
-                      <div
-                        // to={'/deletefriend/' + newfriend.email}
-                        className="btn btn-main-sm bg-transparent text-danger"
-                        id="disc"
-                        onClick={Disconnect}
-                      >
-                        {talk}
-                      </div>
-                    </div>
-                    <div class="searchmygee">
-                      <div class="advance-search ">
-                        <form>
-                          <div class="form-row ">
-                            <div class="form-group col-md-9 ">
-                              <input
-                                type="text"
-                                class="form-control text-dark bg-light"
-                                id="inputLocation4"
-                                placeholder="Search Anonymous"
-                                onChange={Search}
-                              />
-                            </div>
-                            <div class="form-group col-md-1">
-                              <button
-                                type="submit"
-                                class="btn btn-warning"
-                                onClick={Searchsubmit}
-                              >
-                                Find
-                              </button>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             <div className="row">
               <div className="col-md-10 offset-md-1 col-lg-12 offset-lg-0">
                 <div className="pd-ltr-20 xs-pd-20-10">
@@ -392,20 +331,38 @@ const Chat = ({
                           <div className="chat-detail">
                             <div className="chat-profile-header clearfix">
                               <div className="left">
-                                <div className="clearfix bg-transparent">
-                                  <div className="chat-profile-photo">
-                                    <img
-                                      src={mAnonymous}
-                                      alt=""
-                                      className="rounded-circle"
-                                    />
+                                <div className="clearfix d-flex  bg-transparent">
+                                  <div>
+                                    <Link to="/dashboard">
+                                      <img
+                                        src={mAnonymous}
+                                        alt=""
+                                        width="100px"
+                                        className="rounded-circle"
+                                      />
+                                    </Link>
                                   </div>
                                   <div className="chat-profile-name">
-                                    <h3 style={{color:newfriend.online?"green":"gray"}}>{capitalise(newfriend.username)}</h3>
+                                    <h3
+                                      style={{
+                                        color: newfriend.online
+                                          ? 'green'
+                                          : 'gray',
+                                      }}
+                                    >
+                                      {capitalise(newfriend.username)}
+                                    </h3>
                                     <span>
                                       Last seen <br />
-                                      {newfriend.lastlogin}
+                                      {newfriend.lastseen}
                                     </span>
+                                    <div
+                                      className=" btn btn-main-sm border-dark bg-transparent text-danger"
+                                      id="disc"
+                                      onClick={Disconnect}
+                                    >
+                                      {talk}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -479,7 +436,7 @@ const Chat = ({
                                 </ul>
                               </div>
                             </div>
-                            <div className="col-lg-12 col-md-12 chat-footer typp">
+                            <div className="col-lg-12 col-md-12  d-flex border-danger chat-footer typp">
                               <div className="file-upload">
                                 <Link to="">
                                   <i className="fa fa-paperclip"></i>
@@ -490,6 +447,7 @@ const Chat = ({
                                   placeholder="Type your message…"
                                   className="text-center txtt"
                                   onChange={Gettyped}
+                                  autoFocus
                                   value={typed}
                                   style={{ fontSize: '20px' }}
                                   id="foch"
@@ -522,72 +480,8 @@ const Chat = ({
 
     return (
       <div>
-        <section className="dashboard  section mt-0">
+        <section className="dashboard bg-light section mt-0">
           <div className="container">
-            <div class="row makefixed">
-              <div className=" col-md-12 offset-md-1 col-lg-12 offset-lg-0 align-items-center">
-                <div className="sidebar">
-                  <div className="widget user-dashboard-profile d-flex justify-content-between align-items-center col-12 bg-transparent">
-                    {/* <!-- User Image --> */}
-                    <Link to="/dashboard">
-                      <div className="profile-thumb ">
-                        <img
-                          src={mAnonymous}
-                          alt=""
-                          className="rounded-circle"
-                        />
-                      </div>
-                    </Link>
-
-                    <div>
-                      {/* <!-- User Name --> */}
-
-                      <small>...You are chatting with </small>
-                      <h5 className="text-center">
-                        {capitalise(newfriend.username)}
-                      </h5>
-
-                      <br />
-                      <div
-                        // to={'/deletefriend/' + newfriend.email}
-                        className="btn btn-main-sm bg-transparent text-danger"
-                        id="disc"
-                        onClick={Disconnect}
-                      >
-                        {talk}
-                      </div>
-                    </div>
-                    <div class="searchmygee">
-                      <div class="advance-search ">
-                        <form>
-                          <div class="form-row ">
-                            <div class="form-group col-md-9 ">
-                              <input
-                                type="text"
-                                class="form-control text-dark bg-light"
-                                id="inputLocation4"
-                                placeholder="Search Anonymous"
-                                onChange={Search}
-                              />
-                            </div>
-                            <div class="form-group col-md-1">
-                              <button
-                                type="submit"
-                                class="btn btn-warning"
-                                onClick={Searchsubmit}
-                              >
-                                Find
-                              </button>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* <!-- Row Start --> */}
             <div className="row">
               <div className="col-md-12 offset-md-1 col-lg-12 offset-lg-0">
                 <div className="pd-ltr-20 xs-pd-20-10">
@@ -601,17 +495,38 @@ const Chat = ({
                           >
                             <div className="chat-profile-header clearfix">
                               <div className="left">
-                                <div className="clearfix">
-                                  <div className="chat-profile-photo">
-                                    <img
-                                      src={Anonymous}
-                                      alt=""
-                                      className="rounded-circle"
-                                    />
+                                <div className="clearfix d-flex  bg-transparent">
+                                  <div>
+                                    <Link to="/dashboard">
+                                      <img
+                                        src={mAnonymous}
+                                        alt=""
+                                        width="100px"
+                                        className="rounded-circle"
+                                      />
+                                    </Link>
                                   </div>
                                   <div className="chat-profile-name">
-                                    <h3>{newfriend.username}</h3>
-                                    <span>{newfriend.anonymous}</span>
+                                    <h3
+                                      style={{
+                                        color: newfriend.online
+                                          ? 'green'
+                                          : 'gray',
+                                      }}
+                                    >
+                                      {capitalise(newfriend.username)}
+                                    </h3>
+                                    <span>
+                                      Last seen <br />
+                                      {newfriend.lastlogin}
+                                    </span>
+                                    <div
+                                      className=" btn btn-main-sm border-dark bg-transparent text-danger"
+                                      id="disc"
+                                      onClick={Disconnect}
+                                    >
+                                      {talk}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -621,44 +536,16 @@ const Chat = ({
                             <div className="chat-box">
                               <div className="chat-desc  ">
                                 <ul>
-                                  {/* <li className="clearfix admin_chat">
-                                    <span className="chat-img">
-                                      <img src={Anonymous} alt="" />
-                                    </span>
-                                    <div className="chat-body clearfix">
-                                      <p>
-                                        Maybe you already have additional info?
-                                      </p>
-                                      <div className="chat_time">09:40PM</div>
-                                    </div>
-                                  </li>
-                                  <li className="clearfix admin_chat">
-                                    <span className="chat-img">
-                                      <img
-                                        src={Anonymous}
-                                        alt=""
-                                        className="rounded-circle"
-                                      />
-                                    </span>
-                                    <div className="chat-body clearfix">
-                                      <p>
-                                        It is to early to provide some kind of
-                                        estimation here. We need user stories.
-                                      </p>
-                                      <div className="chat_time">09:40PM</div>
-                                    </div>
-                                  </li> */}
-
                                   <li className="clearfix">
                                     <span className="chat-img">
                                       <img src={mAnonymous} alt="" />
                                     </span>
                                     <div className="chat-body clearfix">
-                                      <p className="text-center">
+                                      {/* <p className="text-center mt-3">
                                         no messages yet
-                                      </p>
-                                      <div className="chat_time text-center">
-                                        start chat below
+                                      </p> */}
+                                      <div className="chat_time mt-3 text-center">
+                                        no messages yet !
                                       </div>
                                     </div>
                                   </li>
@@ -681,7 +568,7 @@ const Chat = ({
                 </div>
                 <div className="chat_text_area">
                   <textarea
-                    placeholder="Type your message…"
+                    placeholder="type something ..."
                     className="text-center capitalisation"
                     onChange={Gettyped}
                   ></textarea>

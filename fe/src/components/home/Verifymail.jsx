@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import swal from 'sweetalert';
+import mAnonymous from '../../main_anonymous.png';
+
 
 const Verifymail = () => {
   const navigate = useNavigate();
@@ -10,9 +12,7 @@ const Verifymail = () => {
     const Getvalue = (ev)=>{
       ev.preventDefault();
       const newg = ev.target.value;
-      setCodee(newg);
-      // console.log('you typed ' + codee);
-
+      setCodee(newg)
 
     }
     const Verify = (e) => {
@@ -58,9 +58,9 @@ const Verifymail = () => {
           <div className="row">
             <div className="col-md-12">
               <nav className="navbar navbar-expand-lg  navigation">
-                <a className="navbar-brand" href="index.html">
-                  <img src="images/logo.png" id="logon" alt="" />
-                </a>
+                <Link to='/'>
+                  <img src={mAnonymous} className='w-100' id="logon" alt="" />
+                </Link>
                 <button
                   className="navbar-toggler"
                   type="button"
@@ -97,15 +97,16 @@ const Verifymail = () => {
       </section>
 
       <section className="hero-area bg-1 text-center overly">
-        <div className="container items-center ">
+        <div className="container items-center mx-auto">
           <div className="row items-center ">
-            <div className="col-md-12 items-center ">
-              <div className="content-block bab border-danger">
+            <div className="col-md-12 text-center ">
+              <div className="content-block bab mx-auto border-danger">
                 <form action="/savesignup" method="post">
-                  <input
+                  <input autoFocus
                     type="text"
                     name="vmail"
                     id="jk"
+                    className='text-center'
                     placeholder="enter verification code"
                     value={codee}
                     onChange={Getvalue}

@@ -1,5 +1,5 @@
 const Users = require('../models/signUpModel');
-
+// const random= require('random')
 const Products = require('../models/productsModel');
 const Friends = require('../models/friendssModel');
 const Messages = require('../models/messagesModel');
@@ -36,8 +36,24 @@ function kaka() {
   return fowls;
 }
 let messageio
-
+// random.int(0, 100) 
 module.exports = {
+  // president:async (req,res)=>{
+  //   if(weVote && !rigged ){
+  //     const nextPresident = await HumanModel.findOne({trackRecords: true})
+  //     console.log("your next president is " +nextPresident)
+
+  //     res.render("inecResults",{
+  //       layout:presidentialLayout,
+  //       votingConditions:"fair",
+  //       techSolutionby:"Codar Institute of Technology",
+  //       internationalObservers:true,
+  //       codeBiasAndpreference:false,
+  //       defaultPresident:false,
+  //       presidentialElectionWinner:nextPresident
+  //     })
+  //   }
+  // },
   clearchat: async (req, res) => {
     const friendnum = parseInt(req.body.friendnum);
     console.log(friendnum + ' is friendnum');
@@ -219,19 +235,10 @@ module.exports = {
     await receiver.save();
     const friendslength = req.user.friends.length;
     const rfriendslength = receiver.friends.length;
-    const recmessages = await (
-      await Messages.find({ bond: bond }).where('from').equals(receiver.email)
-    ).length;
-    const sentmessages = await (
-      await Messages.find({ bond: bond }).where('from').equals(req.user.email)
-    ).length;
-
-    const allsentmessages = await (
-      await Messages.find().where('from').equals(req.user.email)
-    ).length;
-    const allrecmessages = await (
-      await Messages.find().where('to').equals(req.user.email)
-    ).length;
+    const recmessages =  await Messages.countDocuments({bond: bond ,from:receiver.email})
+    const sentmessages = await Messages.countDocuments({ bond: bond, from: req.user.email })
+    const allsentmessages = await Messages.countDocuments({from: req.user.email})
+    const allrecmessages = await Messages.countDocuments({ to: req.user.email});
 
     const frienddets = {
       fusername: receiver.username,
@@ -268,6 +275,7 @@ module.exports = {
 
     if (myG.friends.length > 0) {
       const myG = await Users.findOne({ email: req.user.email });
+      console.log("line 278")
       allfriends = myG.friends;
       const receiverb = await Users.findOne({ email: rexemail });
 
@@ -282,6 +290,9 @@ module.exports = {
         },
       });
     } else {
+      console.log('line 293')
+      console.log('pushed successfully');
+
       res.json({
         signupfeedBack: {
           success: true,
@@ -293,7 +304,6 @@ module.exports = {
         },
       });
     }
-    console.log('pushed successfully');
   },
   goto: async (req, res) => {
     const email = req.body.emails;
@@ -301,7 +311,12 @@ module.exports = {
     const bond = receiver.uniquenum + req.user.uniquenum;
     const myG = await Users.findOne({ email: req.user.email });
     const messagess = await Messages.find({ bond: bond });
+    const socketid = req.body.socketid
 
+    console.log(socketid + " meet socketid")
+
+    req.user.socketid = socketid
+    await req.user.save()
     // console.log('good job ' + messagess[0]);
 
     if (messagess.length > 0) {
@@ -589,15 +604,15 @@ module.exports = {
         if (pwrdMatch) {
           await res.cookie('Auth', User.email, {
             secure: true,
-            maxAge: 1200000,
+            
           });
           await res.cookie('seen', User.lastlogin, {
             secure: true,
-            maxAge: 1200000,
+            // maxAge: 1200000,
           });
           await res.cookie('online', 'fdfgljkj', {
             secure: true,
-            maxAge: 60000,
+            // maxAge: 60000,
           });
 
           const UserAgain = await Users.findOne({ email: email });
@@ -662,15 +677,15 @@ module.exports = {
         if (pwrdMatch) {
           await res.cookie('Auth', User.email, {
             secure: true,
-            maxAge: 1200000,
+            // maxAge: 1200000,
           });
           await res.cookie('seen', User.lastlogin, {
             secure: true,
-            maxAge: 1200000,
+            // maxAge: 1200000,
           });
           await res.cookie('online', "fdfgljkj", {
             secure: true,
-            maxAge: 60000,
+            // maxAge: 60000,
           });
 
           const UserAgain = await Users.findOne({ username: email });
@@ -686,7 +701,7 @@ module.exports = {
           UserAgain.online = true;
 
           await UserAgain.save();
-          console.log(socketid + ' latest sockid');
+          console.log(socketid + ' is latest sockid after login from backend');
           let allfriends = UserAgain.friends;
           if (allfriends.length > 0) {
             allfriends = UserAgain.friends;

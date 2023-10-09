@@ -148,22 +148,15 @@ h2 {
   height: 55vh;
   /* border: 2px solid white; */
 }
-.mother {
-  /* border: 2px solid white; */
-}
-/* .setflow{
-  overflow: auto;
-  height: 40vh;
-  width: 100%;
-  word-break: break-all;
-  
-} */
+
+
 .setflow tr {
   overflow: auto;
   height: 15px;
   /* width: 100%; */
   word-break: break-all;
 }
+
 .corne {
   color: cornsilk;
   text-align: left;
@@ -171,17 +164,19 @@ h2 {
 }
 .father {
   display: grid;
-  grid-template-columns: 1fr 2fr 1.5fr;
+  grid-template-columns: 1fr 3fr ;
+  column-gap: 0;
   align-items: center;
   /* border: 2px solid white; */
   padding: 0;
   height: 60vh;
   /* background-color: rgba(59, 13, 134, 0.3); */
 }
+
 @media screen and (max-width:928px){
   .father {
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr;
   row-gap: 10vh;
   /* align-items: center; */
@@ -285,11 +280,11 @@ h2 a {
 }
 
 .choppinput {
-  border: 1px solid blueviolet;
+  border: 1px solid yellowgreen;
   outline: none;
   background: transparent;
   color: corn;
-  height: 5vh;
+  height: 6vh;
   /* border-radius: 25px; */
   padding: 0 10px;
   border-top-left-radius: 85%;

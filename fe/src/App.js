@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Home from './components/home/Home.jsx';
 import Dashboard from './components/dashboard/Dashboard.jsx';
 import Chat from './components/dashboard/Chat.jsx';
@@ -6,28 +6,44 @@ import Editprofile from './components/dashboard/Profile.jsx';
 import Verifymail from './components/home/Verifymail';
 import Signup from './components/home/Signup.jsx';
 import Login from './components/home/Login.jsx';
-import socketIOClient from 'socket.io-client';
-
+import { io } from 'socket.io-client';
+// import random from 'random';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ParticlesBg from 'particles-bg';
-
+// import ParticlesBg from 'particles-bg';
 
 import './App.css';
-import Footer from './components/home/Footer.jsx';
+// import Footer from './components/home/Footer.jsx';
 
 function App() {
+  // const ranny = random.int(1, 6);
+  // console.log(ranny +" is random machine");
   const [user, setUser] = useState({});
   const [friends, setFriends] = useState({});
   const [newfriend, setNewfriend] = useState({});
-  const [currentChat, setCurrentChat] = useState("");
+  const [currentChat, setCurrentChat] = useState('');
   const [cmessages, setMessages] = useState([]);
   const [ifmessages, setIfmessages] = useState(false);
 
-  const ENDPOINT = 'http://localhost:7501/';
+  const ENDPOINT = 'http://localhost:3001/';
 
-  const socket = socketIOClient(ENDPOINT);
-  
+  // const socket = socketIOClient(ENDPOINT);
+  const socket = io(ENDPOINT, {
+    forceNew: true,
+    // autoConnect: true,
+  });
+  // setSocket(sockets)
+  // socket.userid = user.username
+  // return () => socket.close();
+  useEffect(() => {
+    // ... other codes
+    const testdata = 'im testing';
+
+    // Emitting an event that will trigger in the backend
+    socket.emit('reply', {testdata});
+
+    // ... other codes
+  }, [socket]);
 
   return (
     <>

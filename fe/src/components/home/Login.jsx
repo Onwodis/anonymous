@@ -4,12 +4,11 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import Anonyhead from '../dashboard/Anonyhead';
-import socketIOClient from 'socket.io-client';
 
 // import ParticlesBg from 'particles-bg';
 // import ParticleEffectButton from 'react-particle-effect-button';
 
-const Login = ({ user, setUser, friends, setFriends, socket }) => {
+const Login = ({ user, setUser, friends, setFriends}) => {
   function capitalise(x) {
     var b = x.charAt(0).toUpperCase() + x.slice(1);
     return b;
@@ -27,15 +26,17 @@ const Login = ({ user, setUser, friends, setFriends, socket }) => {
     e.preventDefault();
     setUsername(e.target.value);
   };
+  const objectlog = {
+    username: username,
+    password: pwrd,
+    socketid: Math.floor((Math.random() *10000000 + 1)),
+    // socketid: socket.id,
+  };
 
   const Submit = (ev) => {
     ev.preventDefault();
     if (username !== '' && username !== ' ' && pwrd !== '' && pwrd !== ' ') {
-      const objectlog = {
-        username: username,
-        password: pwrd,
-        socketid: socket.id,
-      };
+      
       axios
         .post('/login', {
           login: objectlog,
@@ -45,11 +46,9 @@ const Login = ({ user, setUser, friends, setFriends, socket }) => {
             setUser(res.data.signupfeedBack.user);
             setFriends(res.data.signupfeedBack.allfriends);
             // const email= res.data.signupfeedBack.user.email;
-            const username =
-              res.data.signupfeedBack.user.username.toLowerCase();
-
-            socket.emit('add_user', objectlog);
-            console.log('my socket id is ' + socket.id);
+            
+            // socket.emit('add_user', {objectlog});
+            console.log('my socket id is ' + objectlog.socketid);
 
             swal(
               'Welcome ' + capitalise(res.data.signupfeedBack.user.username),
@@ -112,8 +111,8 @@ const Login = ({ user, setUser, friends, setFriends, socket }) => {
                 <input
                   type="text"
                   name="username"
-                  id="graa"
-                  className="text-center rounded-pill"
+                  id="graan"
+                  className="text-center  text-light form-control rounded-pill"
                   placeholder="username or Email"
                   onChange={Onchangeu}
                 />

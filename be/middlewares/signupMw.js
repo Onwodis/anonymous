@@ -208,6 +208,8 @@ const checkUser = async (req, res, next) => {
     const currentUser = await Users.findOne({ email: auth });
 
     req.user = currentUser;
+    currentUser.lastseen = currentDate()
+    await currentUser.save();
     await res.cookie('Auth', auth, {
       secure: true,
       maxAge: 1200000,

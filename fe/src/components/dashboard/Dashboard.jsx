@@ -1,15 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import React, { useState, Component } from 'react';
+import React, { useState } from 'react';
 import swal from 'sweetalert';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import socketIOClient from 'socket.io-client';
 
 import 'swiper/css';
 // import Anonymous from '../../anonymous.png';
 
 import mAnonymous from '../../main_anonymous.png';
 import './dbd.css';
+
+import io from 'socket.io-client';
+
+const ENDPOINT = 'https://localhost:3001'; // "https://talk-a-tive.herokuapp.com"; -> After deployment
+var socket
+
+
+
+
 
 const Dashboard = ({
   user,
@@ -23,6 +30,7 @@ const Dashboard = ({
   setNewfriend,
   ifmessages,
   setIfmessages,
+  // socket,
 }) => {
   function capitalise(x) {
     var b = x.charAt(0).toUpperCase() + x.slice(1);
@@ -32,7 +40,6 @@ const Dashboard = ({
   const [isShown, setIsShown] = useState(false);
   const [profilee, setProfilee] = useState(false);
   const [hprofile, setHprofile] = useState('View profile !');
-  
 
   const [search, setSearch] = useState('');
   const [idd, setIdd] = useState('kk');
@@ -46,12 +53,12 @@ const Dashboard = ({
       setProfilee(!profilee);
     }
   };
-  
+
   const Gotochat = (emails) => {
     // e.preventDefault()
     // const sayid = e.target.()
     setIdd(emails);
-    console.log(emails + ' is id');
+    // console.log(emails + ' is id');
     if (idd) {
       axios.post('/meet', { emails: emails }).then((res) => {
         if (res.data.signupfeedBack.success) {
@@ -62,7 +69,10 @@ const Dashboard = ({
           setFriends(res.data.signupfeedBack.allfriends);
           setMessages(res.data.signupfeedBack.rmessages);
           
-
+          socket = io(ENDPOINT);
+          console.log(socket)
+          socket.emit('connection', res.data.signupfeedBack.newFriend);
+          
           navigate('/chat');
 
           // alert(res.data.signupfeedBack.message);
@@ -146,11 +156,11 @@ const Dashboard = ({
         const tobecopied = res.data.signupfeedBack.user.anonymous;
         navigator.clipboard.writeText(tobecopied);
         console.log(tobecopied + ' is copied to clipboard');
-        setIsShown((current) => true);
+        setIsShown((current) => true)
         const timeout = setTimeout(() => {
           setIsShown((current) => false);
         }, 2000);
-        timeout();
+        timeout()
       } else if (res.data.signupfeedBack.message === 'expired') {
         setUser({});
         swal({
@@ -177,20 +187,20 @@ const Dashboard = ({
           </Link>
         </div>
         <br />
-        <div className=" slash ">
+        <div className="col-lg-3 col-10 slash text-center">
           {/* <div className=" col-4  col-md-5 "> */}
           <input
             type="text"
-            className=" text-light choppinput"
+            className="rounded  form-control text-center text-light choppinnput"
             id="inputLocation4"
-            placeholder="paste connect pin"
+            placeholder="paste connection pin"
             onChange={Search}
           />
+          &nbsp;
           <button type="submit" className="btn chopp" onClick={Searchsubmit}>
             Find
           </button>
-          {/* </div> */}
-          <div className="form-group col-4 col-md-1 "></div>
+          
         </div>
 
         <br />
@@ -200,17 +210,17 @@ const Dashboard = ({
           </h2>
           <h2
             style={{ display: isShown ? 'block' : 'none' }}
-            className="popin text-success text-center"
+            className="ml-5 popin text-success text-center"
           >
             copied to clipboard
           </h2>
         </div>
         <div className="row ">
-          <div className="container-fluid ">
+          <div className="container-fluid text-center ">
             <div className="col-12">
               <div className=" text-center">
                 <div className="father">
-                  <div className="firstc">
+                  <div className="firstc ">
                     <div>
                       <img src={mAnonymous} alt="" className="ligo mx-auto" />
                     </div>
@@ -242,6 +252,9 @@ const Dashboard = ({
 
                       <table>
                         <tr className="corne">
+                          Avatar
+                        </tr>
+                        <tr className="corne">
                           <td className="">Username &nbsp;</td>
                           <td className="corne">{capitalise(user.username)}</td>
                         </tr>
@@ -272,52 +285,49 @@ const Dashboard = ({
                       </table>
                     </div>
                   </div>
-                  <div className="mother col-12">
-                    <div className="dashh">
+                  <div className="mother align-items-center justify-content-center col-12">
+                    <div className="dashh ">
                       <div>
-                        <table class="container col-10 col-md-7 text-center">
-                          <thead>
-                            <tr>
-                              {/* <th className="text-center">
-                          <h1 className="text-center">Avatar</h1>
-                        </th> */}
-                              <th>
-                                <h1 className="text-center bua">Anonymous</h1>
-                              </th>
-                              <th>
-                                <h1 className="text-center bua">
-                                  Last messages
-                                </h1>
-                              </th>
-                              <th className="tmm">
-                                <h1
-                                  className="text-center bua"
-                                  title="total received messages"
-                                >
-                                  Rx messages
-                                </h1>
-                              </th>
-                              <th className="tmm">
-                                <h1
-                                  className="text-center bua"
-                                  title="total sent messages"
-                                >
-                                  Tx messages
-                                </h1>
-                              </th>
-                            </tr>
-                          </thead>
+                        <table class="container  text-center">
+                          {/* <thead> */}
+                          <tr>
+                            <th className="text-center lm">
+                              <h1 className="text-center">Avatar</h1>
+                            </th>
+                            <th>
+                              <h1 className="text-center bua">Anonymous</h1>
+                            </th>
+                            <th>
+                              <h1 className="text-center bua">Last messages</h1>
+                            </th>
+                            <th className="tmm">
+                              <h1
+                                className="text-center bua"
+                                title="total received messages"
+                              >
+                                Rx messages
+                              </h1>
+                            </th>
+                            <th className="tmm">
+                              <h1
+                                className="text-center bua"
+                                title="total sent messages"
+                              >
+                                Tx messages
+                              </h1>
+                            </th>
+                          </tr>
+                          {/* </thead> */}
                           <tbody className=" setflow">
                             {friends.map((item, index) => (
                               <tr key={index}>
-                                {/* <td className=" lm">
-                            <img
-                              width="80px"
-                              height="auto"
-                              src={mAnonymous}
-                              alt="imagedescription"
-                            />
-                          </td> */}
+                                <td className=" lm">
+                                  <img
+                                    
+                                    src={mAnonymous}
+                                    alt="imagedescription"
+                                  />
+                                </td>
                                 <td className="product-details">
                                   <div className="">
                                     <h3
@@ -364,125 +374,6 @@ const Dashboard = ({
                       </div>
                     </div>
                   </div>
-                  <div className="cbody col-12">
-                    <div class="main-containerss">
-                      <div class="year-stats">
-                        <div class="month-group">
-                          <div class="bar h-100"></div>
-                          <p class="month">Jan</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-50"></div>
-                          <p class="month">Feb</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-75"></div>
-                          <p class="month">Mar</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-25"></div>
-                          <p class="month">Apr</p>
-                        </div>
-                        <div class="month-group selected">
-                          <div class="bar h-100"></div>
-                          <p class="month">May</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-50"></div>
-                          <p class="month">Jun</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-75"></div>
-                          <p class="month">Jul</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-25"></div>
-                          <p class="month">Aug</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-50"></div>
-                          <p class="month">Sep</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-75"></div>
-                          <p class="month">Oct</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-25"></div>
-                          <p class="month">Nov</p>
-                        </div>
-                        <div class="month-group">
-                          <div class="bar h-100"></div>
-                          <p class="month">Dez</p>
-                        </div>
-                      </div>
-
-                      <div class="stats-info col-12">
-                        <div class="graph-container">
-                          <div class="percent">
-                            <svg viewBox="0 0 36 36" class="circular-chart">
-                              <path
-                                class="circle"
-                                stroke-dasharray="100, 100"
-                                d="M18 2.0845
-      a 15.9155 15.9155 0 0 1 0 31.831
-      a 15.9155 15.9155 0 0 1 0 -31.831"
-                              />
-                              <path
-                                class="circle"
-                                stroke-dasharray="85, 100"
-                                d="M18 2.0845
-      a 15.9155 15.9155 0 0 1 0 31.831
-      a 15.9155 15.9155 0 0 1 0 -31.831"
-                              />
-                              <path
-                                class="circle"
-                                stroke-dasharray="60, 100"
-                                d="M18 2.0845
-      a 15.9155 15.9155 0 0 1 0 31.831
-      a 15.9155 15.9155 0 0 1 0 -31.831"
-                              />
-                              <path
-                                class="circle"
-                                stroke-dasharray="30, 100"
-                                d="M18 2.0845
-      a 15.9155 15.9155 0 0 1 0 31.831
-      a 15.9155 15.9155 0 0 1 0 -31.831"
-                              />
-                            </svg>
-                          </div>
-                          <p>
-                            Logged-in <br />
-                            {user.logintimes} times{' '}
-                          </p>
-                        </div>
-
-                        <div class="info">
-                          <p>
-                            Chat buddies &nbsp;
-                            <span>{friends.length}</span>
-                          </p>
-
-                          <p>
-                            Total messages received
-                            <span>&nbsp;{user.allrecmessages}&nbsp;</span>
-                          </p>
-                          <p>
-                            Total messages sent
-                            <span>&nbsp;{user.allsentmessages}&nbsp;</span>
-                          </p>
-                          <p>
-                            Net Users &nbsp;
-                            <span>Over {user.tusers + 'k'}</span>
-                          </p>
-                          <p>
-                            Last seen &nbsp;
-                            <span>{user.lastseen}</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -514,13 +405,13 @@ const Dashboard = ({
 
         <div className="profile-thumb dfl">
           {/* <div className="col-6"> */}
-          <div className="advance-search col-9 col-lg-5 col-md-7 ">
+          <div className="advance-search mt-2 col-9 col-lg-5 col-md-7 ">
             <form>
-              <div className="form-row d-flex justify-content-center ">
+              <div className="form-row d-flex justify-content-center align-items-center">
                 <div className="form-group col-7 col-md-9 ">
                   <input
                     type="text"
-                    className="form-control text-dark"
+                    className="form-control text-center text-light"
                     id="inputLocation4"
                     placeholder="Paste pin"
                     onChange={Search}
@@ -543,16 +434,16 @@ const Dashboard = ({
         {/* <!--==================================
 =            User Profile            =
 ===================================--> */}
-        <section className="dashboard section">
+        <section className="dashboard section text-center">
           {/* <!-- Container Start --> */}
           <div className="container">
             {/* <!-- Row Start --> */}
             <div className="row">
               <div className="col-md-10 offset-md-1 col-lg-12 offset-lg-0">
-                <h2 className="text-center">{user.username}</h2>
+                <h2 className="text-center text-light text-capitalize">{user.username}</h2>
                 <h2
                   style={{ display: isShown ? 'block' : 'none' }}
-                  className="popin"
+                  className="popin ml-2"
                 >
                   copied to clipboard
                 </h2>
@@ -560,14 +451,14 @@ const Dashboard = ({
                 <div className="widget col-12 col-lg-12 col-md-12 dashboard-container my-adslist text-center">
                   {/* <sub>copy userpin</sub> */}
 
-                  <del className="widget-header text-center" onClick={Getano}>
+                  <del className="widget-header text-center text-info" onClick={Getano}>
                     {user.anonymous + 'u'}
                   </del>
-                  <small className="text-center">
-                    Your chat logs are empty{' '}
+                  <small className="text-center text-light">
+                    Your chat logs are empty{''}
                   </small>
                   <br />
-                  <small className="text-center">
+                  <small className="text-center text-warning">
                     search anonymous to start a chat
                   </small>
                 </div>

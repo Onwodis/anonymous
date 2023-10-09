@@ -8,7 +8,6 @@ const signupSchema = new mongoose.Schema({
     type: Number,
   },
   online:false,
-  socketid:String,
   tusers: {
     type: Number,
   },

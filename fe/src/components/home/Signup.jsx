@@ -112,17 +112,17 @@ const Signup = () => {
                 <input
                   type="email"
                   name="email"
-                  className="text-center rounded-pill"
+                  className="text-center text-lowercase rounded-pill"
                   id="graa"
                   placeholder="email"
                   onChange={HandleChange}
                 />
-                <div className=" bola">
+                <div className="bola">
                   <input
                     type="password"
                     name="pwrd"
                     id="pwrd"
-                    placeholder="enter password"
+                    placeholder="password"
                     className="text-center rounded-pill"
                     onChange={HandleChange}
                   />
@@ -131,7 +131,7 @@ const Signup = () => {
                     type="password"
                     name="cpwrd"
                     id="cpwrd"
-                    placeholder="confirm password"
+                    placeholder="confirm "
                     className="text-center rounded-pill"
                     onChange={HandleChange}
                   />

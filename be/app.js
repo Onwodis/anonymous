@@ -64,7 +64,7 @@ app.use(
 // app.set('view engine', 'hbs');
 
 app.use(setUser);
-app.use(cors());
+// app.use(cors());
 
 app.use(
   bodyParser.urlencoded({
@@ -81,7 +81,7 @@ app.use(
 app.use('/', homeRoutes);
 app.use('/productroutes', productRoutes);
 
-const PORT = 7501;
+const PORT = process.env.PORT;
 
 // app.get('/', async (req, res) => {
 //   res.send(`Hi you are welcome`);
@@ -104,86 +104,96 @@ const io = new Server(server, {
     // credentials: true,
   },
 });
+// const io = require('socket.io')(server,{transports: ['websocket']});
 
-global.onlineUsers = new Map();
+
+
+// global.onlineUsers = new Map();
 
 let interval;
-var connectedusers={}
+var connectedusers= []
+// const consocks= new Set()
+// io.on('connect',  (socket) => {
+//   socket.on('reply', ({testdata}) => {
+//     console.log('a reply detected! '+testdata)
+//   });
+//   socket.on('add_user', ({objectlog}) => {
 
-io.on('connection',  (socket) => {
-  // console.log(socket.id + ' just connected');
+//     // const id = socket.handshake.query.id;
+//     socket.join(objectlog.username);
 
-  socket.on('add_user', (objectlog) => {
-    // const user = { unique, email };
-    // if(error)return callback(error)
-    socket.join(objectlog.username)
-    // socket.username=(objectlog.username);
-    // connectedusers[objectlog.username]= socket
-    console.log(objectlog.username + ' has the socket id ' + socket.id);
+//     // socket.username=(objectlog.username);
+//     // connectedusers[objectlog.username]= socket
+//     console.log(objectlog.username + ' has the socket id ' + socket.id);
 
-    console.log(
-      objectlog.username + ' has been added to room ' + objectlog.username
-    );
+//     console.log(
+//       objectlog.username + ' has been added to room ' + objectlog.username +" in sockets "+ socket
+//     );
+//     // console.log(
+//     //   "this is socket " + socket.id
+//     // )
+//   });
+//   socket.on('sendMessage', async( tosend ) => {
+//     // if (connectedusers.hasOwnProperty(tosend.tousername)) {
+//     //   socket.in(tosend.tousername).emit('chatt', tosend);
+//     // }
+//     socket.to(tosend.tousername).emit('chatt', tosend);
+//     console.log(
+//       tosend.message + ' is message sent to socket ' + tosend.tousername
+//     );
+
+//   });
+//   // socket.on('joinroom', ({ bond, email}) => {
+//   //   const user = { bond, email };
+//   //   // if(error)return callback(error)
+//   //   socket.join(bond);
+
+//   //   console.log(user.email + ' has been added to room ' + bond);
+//   // });
+//   // if (interval) {
+//   //   clearInterval(interval);
+//   // }
+//   // interval = setInterval(() => getApiAndEmit(socket), 500);
+//   socket.on('notification', ({ title }) => {
+//     socket.broadcast.emit('noti',(title)) //allows you send to everyone but yourself
+//     console.log(title + ' is notifications')
+//   });
+
+//   socket.on('disconnect', async({user}) => {
+//     console.log(socket.id + ' Client disconnected');
+//     // consocks.delete(socket)
+//   })
+// });
+const connectedClients = {}; // Object to store socket IDs
+
+io.on('connection', (socket) => {
+  connectedusers.push( socket)
+  console.log(
+    'A user connected now ' + socket.id + ' ' + connectedusers.length
+  );
+
+
+
+  // Handle chat messages
+  socket.on('chatMessage', async (data) => {
+    console.log('new message sensed ' + data.message);
+
+    // io.emit('chatt', data); // Broadcast the message to all connected clients
+    if (connectedClients[data.friendsocketid]) {
+      connectedClients[data.friendsocketid].emit('chatt',data);
+      console.log(data.friendsocketid + ' is friendsocketid');
+    } else {
+        console.log(data.friendsocketid + ' friends socketid doesnt exist');
+
+    }
   });
-  socket.on('sendMessage', async( tosend ) => {
-    // if (connectedusers.hasOwnProperty(tosend.tousername)) {
-    //   connectedusers[tosend.tousername].emit('nma', tosend);
-    // }
-    io.in(tosend.tousername).emit('nma', tosend);
-    console.log(tosend.message + ' is message sent to socket ' + tosend.socketid);
 
-  });
-  // socket.on('joinroom', ({ bond, email}) => {
-  //   const user = { bond, email };
-  //   // if(error)return callback(error)
-  //   socket.join(bond);
-
-  //   console.log(user.email + ' has been added to room ' + bond);
-  // });
-  // if (interval) {
-  //   clearInterval(interval);
-  // }
-  // interval = setInterval(() => getApiAndEmit(socket), 500);
-  socket.on('notification', ({ title }) => {
-    socket.broadcast.emit('noti',(title)) //allows you send to everyone but yourself
-    console.log(title + ' is notifications')
-  });
-  
-  
-  
-  socket.on('disconnect', async({user}) => {
-    console.log(socket.id + ' Client disconnected');
-    // const gee = await signUpModel.findOne({socketid: socket.id})
-    // gee.online= false
-    // await gee.save()
-    // console.log(gee.username + "is no longer online")
-    // clearInterval(interval);
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('A user disconnected ');
   });
 });
 
+
 server.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
 
-// const serverr = app.listen(PORT, (req, res) => {
-//   console.log(`i am listening at port ${PORT}`);
-// });
-
-// global.onlineUsers= new Map();
-
-// io.on("connection", (socket)=>{
-//   global.chatSocket = socket
-//   socket.on("add-user", (userId)=>{
-//     onlineUsers.set(userId,socket.id)
-
-//   })
-//   console.log(' user id is  ' + socket.id);
-
-//   socket.on('send-msg', (data) => {
-//     const sendUserSocket = onlineUsers.get(data.msg);
-
-//     if (sendUserSocket) {
-//         console.log('there is something');
-
-//       // socket.to(sendUserSocket).emit('msg-recieve', data.msg);
-//     }
-//   });
-// })
